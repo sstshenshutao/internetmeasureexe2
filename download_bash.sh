@@ -11,3 +11,7 @@ wget --directory-prefix='./csvexcl' --cipher 'DEFAULT:!DH' --secure-protocol tls
 # download the Unit-Profile
 mkdir -p csvup
 wget --directory-prefix='./csvup' --cipher 'DEFAULT:!DH' --secure-protocol tlsv1 http://data.fcc.gov/download/measuring-broadband-america/2019/Unit-Profile-sept2018.xlsx
+
+# download the census-block
+mkdir -p csvcb
+wget --directory-prefix='./csvcb' --cipher 'DEFAULT:!DH' --secure-protocol tlsv1  http://data.fcc.gov/download/measuring-broadband-america/2019/UnitID-census-block-sept2018.xlsx

@@ -7,6 +7,7 @@ from csv_id_counter import csv_count_ids
 tmp_filename = "tmp_ids.csv"
 working_dir1 = 'csvdata'
 working_dir_excl = 'csvexcl'
+output_dir = 'csv_valid_probes'
 
 
 def diff():
@@ -26,5 +27,7 @@ if __name__ == '__main__':
     # run diff of two dfs
     valid_excluded_id_df = diff()
     print("number of valid excluded probes: %d" % valid_excluded_id_df.size)
-    valid_excluded_id_df.to_csv("remaining_probes.csv", mode='w')
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+    valid_excluded_id_df.to_csv(os.path.join(output_dir, "remaining_probes.csv"), mode='w')
     # convert('csvup', 'Unit-Profile-sept2018.xlsx', 'Unit-Profile-sept2018.csv')

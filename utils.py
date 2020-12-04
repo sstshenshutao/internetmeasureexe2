@@ -3,9 +3,9 @@ import os
 import pandas as pd
 
 
-def convert(working_dir, filename, output_filename, sheet_name=0):
+def convert(working_dir, filename, output_filename, sheet_name=0, rename='Unit ID'):
     read_file = pd.read_excel(os.path.join(working_dir, filename), sheet_name=sheet_name)
-    read_file = read_file.rename(columns={'Unit ID': 'unit_id'})
+    read_file = read_file.rename(columns={rename: 'unit_id'})
     read_file.to_csv(os.path.join(working_dir, output_filename), index=None, header=True)
 
 

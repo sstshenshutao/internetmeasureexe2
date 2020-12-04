@@ -3,13 +3,15 @@ import os
 import pandas as pd
 from utils import convert
 
-# prepare the unit profile information
+
 working_dir_uf = 'csvup'
+working_dir_probes = 'csv_valid_probes'
 output_dir = 'question_c_output'
+# prepare the unit profile data
 convert(working_dir_uf, 'Unit-Profile-sept2018.xlsx', 'Unit-Profile-sept2018.csv')
 df_unit_profile = pd.read_csv(os.path.join(working_dir_uf, "Unit-Profile-sept2018.csv"), escapechar='\\')
-
-df_probes = pd.read_csv("remaining_probes.csv", index_col=0)
+# read probes
+df_probes = pd.read_csv(os.path.join(working_dir_probes, "remaining_probes.csv"), index_col=0)
 source_df = df_probes.merge(df_unit_profile, left_on='unit_id', right_on='unit_id')[
     ["unit_id", "ISP", "Technology", "State", "Census", "Download", "Upload"]]
 
