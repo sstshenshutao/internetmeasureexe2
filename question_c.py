@@ -3,7 +3,6 @@ import os
 import pandas as pd
 from utils import convert
 
-
 working_dir_uf = 'csvup'
 working_dir_probes = 'csv_valid_probes'
 output_dir = 'question_c_output'
@@ -30,6 +29,7 @@ def get_upper_bound(x):
 # clean the range data, use the upper bound
 source_df['Upload'] = source_df['Upload'].apply(get_upper_bound)
 source_df['Download'] = source_df['Download'].apply(get_upper_bound)
+source_df.to_csv(os.path.join(working_dir_probes, "remaining_probes_merge_unit_profile_upper_bound.csv"), mode='w')
 
 
 # # avg_dl,sd_dl,avg_ul,sd_ul,median_dl,median_ul
