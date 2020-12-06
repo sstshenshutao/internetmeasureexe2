@@ -3,12 +3,14 @@ import os
 import pandas as pd
 from utils import convert
 
-working_dir_uf = 'csvup'
+working_dir_up = 'csvup'
 working_dir_probes = 'csv_valid_probes'
 output_dir = 'question_c_output'
+
 # prepare the unit profile data
-convert(working_dir_uf, 'Unit-Profile-sept2018.xlsx', 'Unit-Profile-sept2018.csv')
-df_unit_profile = pd.read_csv(os.path.join(working_dir_uf, "Unit-Profile-sept2018.csv"), escapechar='\\')
+convert(working_dir_up, 'Unit-Profile-sept2018.xlsx', 'Unit-Profile-sept2018.csv')
+df_unit_profile = pd.read_csv(os.path.join(working_dir_up, "Unit-Profile-sept2018.csv"), escapechar='\\')
+
 # read probes
 df_probes = pd.read_csv(os.path.join(working_dir_probes, "remaining_probes.csv"), index_col=0)
 source_df = df_probes.merge(df_unit_profile, left_on='unit_id', right_on='unit_id')[
@@ -50,11 +52,13 @@ def final_table(source_table, group_by="ISP", output=None):
     isp_df = isp_df.merge(source_table.groupby(group_by)['Upload'].std().reset_index(name='sd_ul'),
                           left_on=group_by, right_on=group_by)
     # merge the median_dl
-    isp_df = isp_df.merge(source_table.groupby(group_by)['Download'].mean().reset_index(name='median_dl'),
+    isp_df = isp_df.merge(source_table.groupby(group_by)['Download'].median().reset_index(name='median_dl'),
                           left_on=group_by, right_on=group_by)
     # merge the median_ul
-    isp_df = isp_df.merge(source_table.groupby(group_by)['Upload'].std().reset_index(name='median_ul'),
+    isp_df = isp_df.merge(source_table.groupby(group_by)['Upload'].median().reset_index(name='median_ul'),
                           left_on=group_by, right_on=group_by)
+
+    # to file
     isp_df.to_csv(os.path.join(output_dir, ("%s.csv" % output)), mode='w', index=False, float_format="%.4f")
 
 
@@ -70,35 +74,3 @@ if __name__ == '__main__':
     source_df['Technology'] = source_df['Technology'].apply(
         lambda x: 'DSL' if str(x).strip() == 'IPBB' else str(x).strip())
     final_table(source_df, group_by="Technology", output='Technology_without_IPBB')
-#
-# technology_count_df = source_df[["Technology"]].value_counts().reset_index(name='num_probes')
-# print(technology_count_df)
-#
-# state_count_df = source_df[["State"]].value_counts().reset_index(name='num_probes')
-# print(state_count_df)
-
-# census_count_df = source_df[["Census"]].value_counts().reset_index(name='num_probes')
-# print(census_count_df)
-
-# cc = df_probes[["unit_id"]].apply(to_technology, axis=1, result_type='expand')
-# def to_technology(series):
-#     print(series, type(series), series['unit_id'], type(series['unit_id']))
-#     search = df_unit_profile[df_unit_profile['unit_id'] == series['unit_id']]
-#     print(search.size)
-#     return search[["unit_id", "ISP", "Technology", "State", "Census"]].values[0]
-#
-#
-# # ser_to = pd.Series({"kkk": 27681})
-# ser_to = to_technology(pd.Series({"unit_id": 458}))
-# print(ser_to, type(ser_to))
-
-# df_probes["unit_id"], df_probes["ISP"], df_probes["Technology"], df_probes["State"], df_probes[
-#     "Census"] = to_technology(df_probes["unit_id"])
-# ser = df_probes.iloc[:, 0]
-# print(ser, type(ser))
-# df_probes[["unit_id", "ISP", "Technology", "State", "Census"]] = df_probes.iloc[:, 0].map(to_technology, axis=1)
-# print(df_probes)
-# cc = df_probes.iloc[:, 0].map(df_unit_profile.set_index('unit_id')[["unit_id", "ISP", "Technology", "State", "Census"]])
-# print(cc)
-# cc = df_probes["unit_id"].map(dict(df_unit_profile[["unit_id", "ISP", "Technology", "State", "Census"]].values[0]))
-# print(cc)

@@ -5,7 +5,7 @@ import os
 from csv_id_counter import csv_count_ids
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
+import seaborn as sns
 
 # common:
 output_dir = 'question_d_output'
@@ -29,8 +29,7 @@ def count_ids_2011():
 
 def preprocess_plot_source_2011():
     # prepare probes:
-    # todo: remove comment
-    # count_ids_2011()
+    count_ids_2011()
     source_df_2011 = pd.read_csv(os.path.join(working_dir_2011, 'tmp_ids.csv'), escapechar='\\', index_col=0)
 
     # prepare unit profile:
@@ -57,6 +56,7 @@ def preprocess_plot_source_2011():
 def plot(source_df, year, ax, linestyle='solid', metric='Download & Upload'):
     # get 3
     plot_df = source_df[['Technology', "Download", "Upload"]].copy()
+
     # generate groups by technology
     for name, group_df in plot_df.groupby('Technology'):
         # calculate cdf for all df
@@ -70,18 +70,31 @@ def plot(source_df, year, ax, linestyle='solid', metric='Download & Upload'):
         # group_df[upload_column_name] = ul_series.cumsum() / ul_series.sum()
 
         # algo 2
-        download_column_name = "%s_%s dl" % (name, year)
-        group_df[download_column_name] = group_df["Download"].rank(method='average', pct=True)
-        upload_column_name = "%s_%s ul" % (name, year)
-        group_df[upload_column_name] = group_df["Upload"].rank(method='average', pct=True)
+        # download_column_name = "%s_%s dl" % (name, year)
+        # group_df[download_column_name] = group_df["Download"].rank(method='average', pct=True)
+        # upload_column_name = "%s_%s ul" % (name, year)
+        # group_df[upload_column_name] = group_df["Upload"].rank(method='average', pct=True)
 
         # sort and plot
-        group_df = group_df.sort_values('Download')
+        # group_df = group_df.sort_values('Download')
+        # if metric == 'Download & Upload' or metric == 'Download':
+        #     group_df.plot(x='Download', y=download_column_name, ax=ax, linestyle=linestyle)
+        # group_df = group_df.sort_values('Upload')
+        # if metric == 'Download & Upload' or metric == 'Upload':
+        #     group_df.plot(x='Upload', y=upload_column_name, ax=ax, linestyle=linestyle)
+
+        # use sns
+        download_column_name = "%s_%s dl" % (name, year)
+        group_df[download_column_name] = group_df["Download"]
+        upload_column_name = "%s_%s ul" % (name, year)
+        group_df[upload_column_name] = group_df["Upload"]
+
         if metric == 'Download & Upload' or metric == 'Download':
-            group_df.plot(x='Download', y=download_column_name, ax=ax, linestyle=linestyle)
-        group_df = group_df.sort_values('Upload')
+            sns.ecdfplot(ax=ax, data=group_df, x=download_column_name, label=download_column_name, linestyle=linestyle,
+                         stat="proportion")
         if metric == 'Download & Upload' or metric == 'Upload':
-            group_df.plot(x='Upload', y=upload_column_name, ax=ax, linestyle=linestyle)
+            sns.ecdfplot(ax=ax, data=group_df, x=upload_column_name, label=upload_column_name, linestyle=linestyle,
+                         stat="proportion")
 
 
 def preprocess_plot_source_2018():
@@ -89,19 +102,19 @@ def preprocess_plot_source_2018():
     return source_df
 
 
-def plot_metric(metric):
+def plot_metric(source_2011, source_2018, metric):
     # start an axis
     plt.clf()
     ax = plt.gca()
     # plot 2011
-    plot(preprocess_plot_source_2011(), '2011', ax, linestyle='dashed', metric=metric)
+    plot(source_2011, '2011', ax, linestyle='dashed', metric=metric)
     # plot 2018
-    plot(preprocess_plot_source_2018(), '2018', ax, metric=metric)
+    plot(source_2018, '2018', ax, metric=metric)
     # show plot
     ax.set_ylabel('CDF')
     ax.set_xlabel('Advertised Speed [Mbps]')
     ax.set_xscale('log')
-    plt.legend(loc="lower right")
+    ax.legend(bbox_to_anchor=(0.9, 0.5), fontsize='xx-small')
     ax.set_title('2011/2018 %s' % metric)
     # plt.show()
     return plt
@@ -110,6 +123,10 @@ def plot_metric(metric):
 if __name__ == '__main__':
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
-    plot_metric('Download').savefig(os.path.join(output_dir, 'download.png'), dpi=300)
-    plot_metric('Upload').savefig(os.path.join(output_dir, 'upload.png'), dpi=300)
-    plot_metric('Download & Upload').savefig(os.path.join(output_dir, 'both.png'), dpi=300)
+    plot_source_2011 = preprocess_plot_source_2011()
+    plot_source_2018 = preprocess_plot_source_2018()
+    plot_metric(plot_source_2011, plot_source_2018, 'Download').savefig(os.path.join(output_dir, 'download.png'),
+                                                                        dpi=300)
+    plot_metric(plot_source_2011, plot_source_2018, 'Upload').savefig(os.path.join(output_dir, 'upload.png'), dpi=300)
+    plot_metric(plot_source_2011, plot_source_2018, 'Download & Upload').savefig(os.path.join(output_dir, 'both.png'),
+                                                                                 dpi=300)

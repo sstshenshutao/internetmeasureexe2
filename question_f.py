@@ -9,7 +9,6 @@ from csv_id_counter import csv_count_ids
 
 tmp_filename = "tmp_ids.csv"
 default_all_csv_files = ['curr_httpgetmt6.csv', 'curr_httpgetmt.csv', 'curr_httppostmt6.csv', 'curr_httppostmt.csv']
-# default_all_csv_files = ['sample6.csv', 'sample.csv']
 default_working_dir = ['csv2020', '202008']
 working_dir_excl = 'csvexcl'
 

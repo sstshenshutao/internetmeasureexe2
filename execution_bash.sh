@@ -14,3 +14,18 @@ python gpd_visual.py
 
 # the output csv in ./question_c_output/*.csv
 python question_c.py
+
+# question d)
+
+# the output csv in ./question_d_output/*.png
+python question_d.py
+
+# question f)
+
+# the output csv in folder 'csv2020/202008/*_clean.csv'
+python question_f.py
+
+# question g)
+
+# the output in commandline
+python question_g.py
