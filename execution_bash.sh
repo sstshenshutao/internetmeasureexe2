@@ -17,7 +17,7 @@ python question_c.py
 
 # question d)
 
-# the output csv in ./question_d_output/*.png
+# the output in ./question_d_output/*.png
 python question_d.py
 
 # question f)
@@ -29,3 +29,8 @@ python question_f.py
 
 # the output in commandline
 python question_g.py
+
+# question h)
+
+# the output in ./question_h_output/*.png
+python question_h.py

@@ -11,8 +11,6 @@ one for the download, one for the execution:
 
 ```
 ## report
-please start the report exercise2.ipynb  
+please start the report: exercise2.ipynb  
 
-## 
-To generate those output again:  
 
