@@ -5,6 +5,7 @@ import os
 import sys
 
 import requests
+import urllib3
 
 
 class Downloader:
@@ -47,4 +48,13 @@ if __name__ == '__main__':
     args = init_argparse()
     arg_url = args.url
     arg_dist_dir = args.dist_dir
+    # set some cipher => for this web
+    requests.packages.urllib3.disable_warnings()
+    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
+    try:
+        requests.packages.urllib3.contrib.pyopenssl.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
+    except AttributeError:
+        # no pyopenssl support used / needed / available
+        pass
+    # download
     Downloader.download_file(arg_url, arg_dist_dir)
